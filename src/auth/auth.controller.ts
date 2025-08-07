@@ -1,8 +1,9 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
-import { JwtAuthGuard } from './guards/jwt-auth.guard';
-
+import { ApiBearerAuth } from '@nestjs/swagger';
+// import { JwtAuthGuard } from './guards/jwt-auth.guard';
+@ApiBearerAuth()
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -12,7 +13,7 @@ export class AuthController {
     return await this.authService.login(dto);
   }
 
-  @UseGuards(JwtAuthGuard)
+  //   @UseGuards(JwtAuthGuard)
   @Get('profile ')
   getProfile(@Req() request: any) {
     return {

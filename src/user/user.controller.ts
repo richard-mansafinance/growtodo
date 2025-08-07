@@ -1,4 +1,11 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Param,
+  ParseIntPipe,
+  Post,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserDto } from './dto/user.dto';
 
@@ -9,6 +16,11 @@ export class UserController {
   @Post('register')
   async register(@Body() userDto: UserDto) {
     return await this.userService.register(userDto);
+  }
+
+  @Delete('delete/:id')
+  async deleteUser(@Param('id', ParseIntPipe) userId: number): Promise<void> {
+    await this.userService.deleteUser(userId);
   }
 
   //   @Post('forgot-password')

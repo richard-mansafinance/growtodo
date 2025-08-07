@@ -13,6 +13,7 @@ import {
   ApiBearerAuth,
   ApiCreatedResponse,
   ApiOperation,
+  ApiResponse,
 } from '@nestjs/swagger';
 @ApiBearerAuth()
 @Controller('user')
@@ -28,6 +29,17 @@ export class UserController {
   }
 
   @Delete('delete/:id')
+  @ApiOperation({ summary: 'Delete a user' })
+  @ApiCreatedResponse({ description: 'User deleted successfully' })
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Delete a user by ID' })
+  @ApiResponse({
+    status: 200,
+    description: 'User deleted successfully',
+    type: Object,
+  })
+  @ApiResponse({ status: 400, description: 'User not found' })
+  @ApiResponse({ status: 500, description: 'Failed to delete user' })
   async deleteUser(@Param('id', ParseIntPipe) userId: number): Promise<void> {
     await this.userService.deleteUser(userId);
   }

@@ -1,4 +1,11 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Param,
+  ParseIntPipe,
+  Post,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserDto } from './dto/user.dto';
 import {
@@ -6,6 +13,7 @@ import {
   ApiBearerAuth,
   ApiCreatedResponse,
   ApiOperation,
+  ApiResponse,
 } from '@nestjs/swagger';
 @ApiBearerAuth()
 @Controller('user')
@@ -18,6 +26,22 @@ export class UserController {
   @ApiBadRequestResponse({ description: 'Invalid credentials' })
   async register(@Body() userDto: UserDto) {
     return await this.userService.register(userDto);
+  }
+
+  @Delete('delete/:id')
+  @ApiOperation({ summary: 'Delete a user' })
+  @ApiCreatedResponse({ description: 'User deleted successfully' })
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Delete a user by ID' })
+  @ApiResponse({
+    status: 200,
+    description: 'User deleted successfully',
+    type: Object,
+  })
+  @ApiResponse({ status: 400, description: 'User not found' })
+  @ApiResponse({ status: 500, description: 'Failed to delete user' })
+  async deleteUser(@Param('id', ParseIntPipe) userId: number): Promise<void> {
+    await this.userService.deleteUser(userId);
   }
 
   //   @Post('forgot-password')

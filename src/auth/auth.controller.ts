@@ -21,4 +21,12 @@ export class AuthController {
       user: request.user,
     };
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('logout')
+  async logout(@Req() request: any) {
+    const token = request.headers.authorization.split(' ')[1];
+    await this.authService.logout(token);
+    return { message: 'Logged out successfully' };
+  }
 }

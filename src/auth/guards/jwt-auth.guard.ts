@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { Observable } from 'rxjs';
+import { TokenBlacklistService } from '../token-blacklist.service';
 
 interface JwtPayload {
   sub: number;
@@ -18,11 +18,10 @@ export class JwtAuthGuard implements CanActivate {
   constructor(
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
+    private readonly tokenBlacklistService: TokenBlacklistService,
   ) {}
 
-  canActivate(
-    context: ExecutionContext,
-  ): boolean | Promise<boolean> | Observable<boolean> {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     const authHeader = request.headers.authorization;
 
@@ -34,6 +33,11 @@ export class JwtAuthGuard implements CanActivate {
     const token = authHeader.split(' ')[1];
     if (!token) {
       throw new UnauthorizedException('No token provided');
+    }
+
+    // Check blacklist
+    if (await this.tokenBlacklistService.isBlacklisted(token)) {
+      throw new UnauthorizedException('Token has been invalidated');
     }
 
     try {

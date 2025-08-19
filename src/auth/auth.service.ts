@@ -9,6 +9,7 @@ import { User } from '../user/entities/user.entity';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
+import { TokenBlacklistService } from './token-blacklist.service';
 
 @Injectable()
 export class AuthService {
@@ -16,6 +17,7 @@ export class AuthService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private jwtService: JwtService,
+    private readonly tokenBlacklistService: TokenBlacklistService,
   ) {}
 
   async login(dto: LoginDto) {
@@ -48,5 +50,15 @@ export class AuthService {
       const message = error instanceof Error ? error.message : 'Unknown error';
       throw new BadRequestException('Login failed', message);
     }
+  }
+
+  async logout(token: string) {
+    const decoded = this.jwtService.decode(token);
+    if (!decoded?.exp) {
+      throw new Error('Invalid token');
+    }
+    const exp = decoded.exp - Math.floor(Date.now() / 1000); // remaining seconds
+    await this.tokenBlacklistService.blacklistToken(token, exp);
+    return { message: 'Logged out successfully' };
   }
 }

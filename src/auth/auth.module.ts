@@ -5,10 +5,12 @@ import { AuthService } from './auth.service';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthController } from './auth.controller';
+import { BlacklistedToken } from './entities/blacklisted-token.entity';
+import { TokenBlacklistService } from './token-blacklist.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, BlacklistedToken]),
     ConfigModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
@@ -19,8 +21,8 @@ import { AuthController } from './auth.controller';
       }),
     }),
   ],
-  providers: [AuthService],
+  providers: [AuthService, TokenBlacklistService],
   controllers: [AuthController],
-  exports: [JwtModule],
+  exports: [JwtModule, TokenBlacklistService],
 })
 export class AuthModule {}

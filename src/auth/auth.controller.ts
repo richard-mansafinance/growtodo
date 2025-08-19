@@ -14,7 +14,7 @@ export class AuthController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get('profile ')
+  @Get('profile')
   getProfile(@Req() request: any) {
     return {
       message: 'Welcome to your profile',

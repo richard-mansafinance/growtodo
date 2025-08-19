@@ -20,6 +20,7 @@ import {
 export class UserController {
   constructor(private userService: UserService) {}
 
+  //   Register a new user
   @Post('register')
   @ApiOperation({ summary: 'Register a new user' })
   @ApiCreatedResponse({ description: 'User created successfully' })
@@ -28,6 +29,7 @@ export class UserController {
     return await this.userService.register(userDto);
   }
 
+  //   Delete a user by ID
   @Delete('delete/:id')
   @ApiOperation({ summary: 'Delete a user' })
   @ApiCreatedResponse({ description: 'User deleted successfully' })

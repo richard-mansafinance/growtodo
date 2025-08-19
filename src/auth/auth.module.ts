@@ -9,6 +9,7 @@ import { AuthController } from './auth.controller';
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
+    ConfigModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -20,5 +21,6 @@ import { AuthController } from './auth.controller';
   ],
   providers: [AuthService],
   controllers: [AuthController],
+  exports: [JwtModule],
 })
 export class AuthModule {}

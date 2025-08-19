@@ -25,7 +25,12 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Post('logout')
   async logout(@Req() request: any) {
-    const token = request.headers.authorization.split(' ')[1];
+    const authHeader = request.headers.authorization;
+    const token: string | undefined =
+      typeof authHeader === 'string' ? authHeader.split(' ')[1] : undefined;
+    if (!token) {
+      throw new Error('Authorization token not found');
+    }
     await this.authService.logout(token);
     return { message: 'Logged out successfully' };
   }

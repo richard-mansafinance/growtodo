@@ -1,4 +1,3 @@
-// src/auth/entities/blacklisted-token.entity.ts
 import {
   Entity,
   PrimaryGeneratedColumn,

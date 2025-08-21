@@ -15,14 +15,15 @@ export class OtpService {
   ) {}
 
   async generateOTP(user: User, type: OTPType): Promise<string> {
-    const otp = crypto.randomInt(100000 + Math.random() * 900000).toString(); // Generate a 6-digit OTP
-    const hashedOTP = await bcrypt.hash(otp, 10); // Hash the OTP for storage
+    // ✅ Correct OTP generation
+    const otp = crypto.randomInt(100000, 999999).toString();
+
+    const hashedOTP = await bcrypt.hash(otp, 10);
     const now = new Date();
     const expiresAt = new Date(now.getTime() + 5 * 60 * 1000); // OTP valid for 5 minutes
 
-    // create otp entity
     const otpEntity = this.otpRepository.create({
-      user, // Assuming user entity is already defined
+      user,
       token: hashedOTP,
       type,
       createdAt: now,

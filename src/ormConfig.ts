@@ -2,6 +2,7 @@ import { ConfigService } from '@nestjs/config';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { User } from './user/entities/user.entity';
 import { BlacklistedToken } from './auth/entities/blacklisted-token.entity';
+import { Otp } from './otp/entity/otp.entity';
 
 export const typeOrmConfig = (
   configService: ConfigService,
@@ -12,6 +13,6 @@ export const typeOrmConfig = (
   username: configService.get<string>('DB_USERNAME'),
   password: configService.get<string>('DB_PASSWORD'),
   database: configService.get<string>('DB_DATABASE'),
-  entities: [User, BlacklistedToken],
+  entities: [User, BlacklistedToken, Otp],
   synchronize: true,
 });

@@ -7,6 +7,7 @@ import { typeOrmConfig } from './ormConfig';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { EmailModule } from './email/email.module';
+import { OtpModule } from './otp/otp.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { EmailModule } from './email/email.module';
     UserModule,
     AuthModule,
     EmailModule, // Ensure AuthModule is imported here
+    OtpModule,
   ],
   controllers: [AppController],
   providers: [AppService],

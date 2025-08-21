@@ -10,6 +10,7 @@ import { UserDto } from './dto/user.dto';
 import * as bcrypt from 'bcryptjs';
 import { OtpService } from '../otp/otp.service';
 import { OTPType } from '../otp/types/otpType';
+import { EmailService } from '../email/email.service';
 
 @Injectable()
 export class UserService {
@@ -17,6 +18,7 @@ export class UserService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private readonly otpService: OtpService,
+    private readonly emailService: EmailService,
   ) {}
 
   //   create user
@@ -45,6 +47,15 @@ export class UserService {
     await this.userRepository.save(newUser);
 
     const otp = await this.otpService.generateOTP(newUser, OTPType.OTP);
+
+    const emailDto = {
+      recipients: [email],
+      subject: 'OTP for Registration',
+      html: `<p>Your OTP for registration is <strong>${otp}</strong>. It is valid for 5 minutes.</p>`,
+    };
+
+    // Send OTP via email
+    await this.emailService.sendEmail(emailDto);
 
     return {
       user: newUser,

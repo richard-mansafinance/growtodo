@@ -26,7 +26,8 @@ export class UserController {
   @ApiCreatedResponse({ description: 'User created successfully' })
   @ApiBadRequestResponse({ description: 'Invalid credentials' })
   async register(@Body() userDto: UserDto) {
-    return await this.userService.register(userDto);
+    await this.userService.register(userDto);
+    return { message: 'User registered successfully and OTP sent to email.' };
   }
 
   //   Delete a user by ID

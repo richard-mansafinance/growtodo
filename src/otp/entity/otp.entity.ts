@@ -14,7 +14,10 @@ export class Otp {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @ManyToOne(() => User, { nullable: false })
+  @ManyToOne(() => User, (user) => user.otps, {
+    nullable: false,
+    onDelete: 'CASCADE', // 👈 this fixes the error
+  })
   @JoinColumn()
   user!: User;
 

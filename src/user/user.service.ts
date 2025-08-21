@@ -8,16 +8,21 @@ import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { UserDto } from './dto/user.dto';
 import * as bcrypt from 'bcryptjs';
+import { OtpService } from '../otp/otp.service';
+import { OTPType } from '../otp/types/otpType';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    private readonly otpService: OtpService,
   ) {}
 
   //   create user
-  async register(dto: UserDto): Promise<{ user: User; message: string }> {
+  async register(
+    dto: UserDto,
+  ): Promise<{ user: User; message: string; otp: string }> {
     const { email, password } = dto;
 
     // check if email already exists
@@ -39,8 +44,11 @@ export class UserService {
 
     await this.userRepository.save(newUser);
 
+    const otp = await this.otpService.generateOTP(newUser, OTPType.OTP);
+
     return {
       user: newUser,
+      otp,
       message: 'User registered successfully',
     };
   }

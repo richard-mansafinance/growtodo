@@ -9,7 +9,7 @@ export class EmailService {
   constructor(private readonly configService: ConfigService) {}
 
   createTransporter() {
-    const transporter = nodemailer.createTransport({
+    const transport = nodemailer.createTransport({
       host: this.configService.get<string>('EMAIL_HOST'),
       port: this.configService.get<number>('EMAIL_PORT'),
       secure: false,
@@ -18,7 +18,7 @@ export class EmailService {
         pass: this.configService.get<string>('EMAIL_PASSWORD'),
       },
     } as SMTPTransport.Options);
-    return transporter;
+    return transport;
   }
 
   async sendEmail(dto: sendEmailDto) {
@@ -36,6 +36,7 @@ export class EmailService {
       console.log('Email sent successfully');
       return { message: 'Email sent successfully' };
     } catch (error: unknown) {
+      console.error('Error sending email:', error);
       throw new Error('Error sending email: ' + (error as Error).message);
     }
   }

@@ -53,8 +53,7 @@ export class OtpService {
   async validateOTP(userId: number, token: string): Promise<boolean> {
     const validToken = await this.otpRepository.findOne({
       where: {
-        user: { id: Number(userId) },
-        token: token,
+        user: { id: userId },
         expiresAt: MoreThan(new Date()),
       },
       relations: ['user'], // if needed, depending on your entity setup

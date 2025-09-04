@@ -16,7 +16,7 @@ export class Otp {
 
   @ManyToOne(() => User, (user) => user.otps, {
     nullable: false,
-    onDelete: 'CASCADE', // 👈 this fixes the error
+    onDelete: 'CASCADE',
   })
   @JoinColumn()
   user!: User;

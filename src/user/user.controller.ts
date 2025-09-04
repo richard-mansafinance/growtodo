@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  NotFoundException,
   Param,
   ParseIntPipe,
   Post,
@@ -15,6 +16,8 @@ import {
   ApiOperation,
   ApiResponse,
 } from '@nestjs/swagger';
+import { RequestTokenDto } from './dto/requestToken.dto';
+import { OTPType } from '../otp/types/otpType';
 @ApiBearerAuth()
 @Controller('user')
 export class UserController {
@@ -27,7 +30,20 @@ export class UserController {
   @ApiBadRequestResponse({ description: 'Invalid credentials' })
   async register(@Body() userDto: UserDto) {
     await this.userService.register(userDto);
-    return { message: 'User registered successfully and OTP sent to email.' };
+    return { message: 'User created successfully and OTP sent to email.' };
+  }
+
+  // Request OTP for email
+  @Post('request-otp')
+  async requestOTP(@Body() dto: RequestTokenDto) {
+    const { email } = dto;
+    const user = await this.userService.findByEmail(email);
+    if (!user) {
+      throw new NotFoundException('User with this email does not exist');
+    }
+    // Send OTP
+    await this.userService.emailVerification(user, OTPType.OTP);
+    return { message: 'OTP sent successfully. Please check email' };
   }
 
   //   Delete a user by ID

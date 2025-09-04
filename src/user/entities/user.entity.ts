@@ -1,4 +1,10 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  OneToMany,
+  CreateDateColumn,
+} from 'typeorm';
 import { Otp } from '../../otp/entity/otp.entity';
 
 @Entity()
@@ -14,4 +20,10 @@ export class User {
 
   @OneToMany(() => Otp, (otp) => otp.user, { cascade: true })
   otps!: Otp[];
+
+  @CreateDateColumn()
+  createdAt!: Date;
+
+  @Column({ default: 'unverified' })
+  accountStatus!: 'unverified' | 'verified';
 }

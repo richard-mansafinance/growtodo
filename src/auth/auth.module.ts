@@ -7,6 +7,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthController } from './auth.controller';
 import { BlacklistedToken } from './entities/blacklisted-token.entity';
 import { TokenBlacklistService } from './token-blacklist.service';
+import { OtpModule } from '../otp/otp.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { TokenBlacklistService } from './token-blacklist.service';
         signOptions: { expiresIn: '1h' }, // Adjust the expiration time as needed
       }),
     }),
+    OtpModule,
   ],
   providers: [AuthService, TokenBlacklistService],
   controllers: [AuthController],

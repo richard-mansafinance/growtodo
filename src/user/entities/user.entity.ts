@@ -23,4 +23,7 @@ export class User {
 
   @CreateDateColumn()
   createdAt!: Date;
+
+  @Column({ default: 'unverified' })
+  accountStatus!: 'unverified' | 'verified';
 }

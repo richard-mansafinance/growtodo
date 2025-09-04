@@ -22,9 +22,7 @@ export class UserService {
   ) {}
 
   //   create user
-  async register(
-    dto: UserDto,
-  ): Promise<{ user: User; message: string; otp: string }> {
+  async register(dto: UserDto): Promise<void> {
     const { email, password } = dto;
 
     // check if email already exists
@@ -47,25 +45,22 @@ export class UserService {
     });
 
     await this.userRepository.save(newUser);
+    return this.emailVerification(newUser, OTPType.OTP);
+  }
 
-    const otp = await this.otpService.generateOTP(newUser, OTPType.OTP);
+  // Send otp or reset link via email
+  async emailVerification(user: User, otpType: OTPType) {
+    const otp = await this.otpService.generateOTP(user, otpType);
 
     const emailDto = {
-      recipients: [email],
-      subject: 'OTP for Registration',
-      html: `<p>Your OTP for registration is <strong>${otp}</strong>. It is valid for 5 minutes.</p>`,
+      recipients: [user.email],
+      subject: 'OTP for verification',
+      html: `<p>Your OTP code is <strong>${otp}</strong>. Provide this otp to verify your account.</p>`,
     };
 
     // Send OTP via email
     await this.emailService.sendEmail(emailDto);
-
-    return {
-      user: newUser,
-      otp,
-      message: 'User registered successfully',
-    };
   }
-
   //   find by email
   async findByEmail(email: string): Promise<User | null> {
     return await this.userRepository.findOne({ where: { email } });

@@ -22,6 +22,15 @@ export class AuthController {
     return await this.authService.login(dto);
   }
 
+
+  @Post('reset-password')
+  async resetPassword(
+    @Body() body: { token, password }: {token: string; password: string}
+) {
+    return this.authService.resetPassword(token, password);
+ 
+  }   
+
   @UseGuards(JwtAuthGuard)
   @Get('profile')
   @ApiOkResponse({

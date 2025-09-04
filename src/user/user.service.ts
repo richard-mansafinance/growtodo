@@ -11,6 +11,7 @@ import * as bcrypt from 'bcryptjs';
 import { OtpService } from '../otp/otp.service';
 import { OTPType } from '../otp/types/otpType';
 import { EmailService } from '../email/email.service';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class UserService {
@@ -19,6 +20,7 @@ export class UserService {
     private readonly userRepository: Repository<User>,
     private readonly otpService: OtpService,
     private readonly emailService: EmailService,
+    private readonly configService: ConfigService,
   ) {}
 
   //   create user
@@ -50,16 +52,28 @@ export class UserService {
 
   // Send otp or reset link via email
   async emailVerification(user: User, otpType: OTPType) {
-    const otp = await this.otpService.generateOTP(user, otpType);
+    const token = await this.otpService.generateToken(user, otpType);
 
-    const emailDto = {
-      recipients: [user.email],
-      subject: 'OTP for verification',
-      html: `<p>Your OTP code is <strong>${otp}</strong>. Provide this otp to verify your account.</p>`,
-    };
+    if (otpType === OTPType.OTP) {
+      const emailDto = {
+        recipients: [user.email],
+        subject: 'OTP for verification',
+        html: `<p>Your OTP code is <strong>${token}</strong>. Provide this otp to verify your account.</p>`,
+      };
 
-    // Send OTP via email
-    await this.emailService.sendEmail(emailDto);
+      // Send OTP via email
+      await this.emailService.sendEmail(emailDto);
+    } else if (otpType === OTPType.RESET_LINK) {
+      const resetLink = `${this.configService.get<string>('RESET_PASSWORD_URL')}?token=${token}`;
+      const emailDto = {
+        recipients: [user.email],
+        subject: 'Password Reset Link',
+        html: `<p>Click <a href="${resetLink}">here</a> to reset your password. This link is valid for 1 hour.</p>`,
+      };
+
+      // Send reset link via email
+      await this.emailService.sendEmail(emailDto);
+    }
   }
   //   find by email
   async findByEmail(email: string): Promise<User | null> {

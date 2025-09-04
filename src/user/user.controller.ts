@@ -73,5 +73,8 @@ export class UserController {
     }
 
     await this.userService.emailVerification(user, OTPType.RESET_LINK);
+    return {
+      message: 'Password reset link has been sent. Please check your email.',
+    };
   }
 }

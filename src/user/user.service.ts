@@ -38,10 +38,12 @@ export class UserService {
 
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(password, salt);
+    const now = new Date();
 
     const newUser = this.userRepository.create({
       email,
       password: hashedPassword,
+      createdAt: now,
     });
 
     await this.userRepository.save(newUser);

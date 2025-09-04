@@ -22,7 +22,7 @@ export class Otp {
   user!: User;
 
   @Column()
-  token!: string; // hashed otp for verification or reset token for password
+  token!: string; // hashed otp for verification
 
   @Column({ type: 'enum', enum: OTPType })
   type!: OTPType;

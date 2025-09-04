@@ -93,4 +93,21 @@ export class AuthService {
     await this.tokenBlacklistService.blacklistToken(token, exp);
     return { message: 'Logged out successfully' };
   }
+
+  // Service for reset password
+  async resetPassword(token: string, newPassword: string): Promise<string> {
+    const userId = await this.otpService.validateResetPassword(token);
+    const user = await this.userRepository.findOne({
+      where: { id: Number(userId) },
+    });
+
+    if (!user) {
+      throw new BadRequestException('User does not exist');
+    }
+
+    // hash the new password and update the user record
+    user.password = await bcrypt.hash(newPassword, 10);
+    await this.userRepository.save(user);
+    return 'Password reset successful';
+  }
 }

@@ -32,8 +32,8 @@ export class User {
   accountStatus!: 'unverified' | 'verified';
 
   @DeleteDateColumn({ nullable: true })
-  deletedAt?: Date; // Optional, set when user is soft-deleted
+  deletedAt!: Date; // Optional, set when user is soft-deleted
 
   @OneToMany(() => Todo, (todo) => todo.user, { nullable: true })
-  todos!: Todo[] | null; // Explicitly allow null for safety
+  todos?: Todo[] | null; // Explicitly allow null for safety
 }

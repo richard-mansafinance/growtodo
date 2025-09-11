@@ -3,6 +3,7 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   NotFoundException,
   Param,
   ParseIntPipe,
@@ -19,6 +20,7 @@ import {
 } from '@nestjs/swagger';
 import { RequestTokenDto } from './dto/requestToken.dto';
 import { OTPType } from '../otp/types/otpType';
+import { User } from './entities/user.entity';
 @ApiBearerAuth()
 @Controller('user')
 export class UserController {
@@ -47,6 +49,27 @@ export class UserController {
     return { message: 'OTP sent successfully. Please check email' };
   }
 
+  // Get all users
+  @Get('all')
+  @ApiOperation({ summary: 'Get all active users' })
+  @ApiBearerAuth()
+  @ApiResponse({
+    status: 200,
+    description: 'List of all active users',
+    type: [User],
+  })
+  async getAllUsers() {
+    const users = await this.userService.getAllUsers();
+    return users;
+  }
+
+  // Get single user by ID
+  @Get(':id')
+  async getUserById(@Param('id', ParseIntPipe) userId: number) {
+    const user = await this.userService.getUserById(userId);
+    return user;
+  }
+
   //   Delete a user by ID
   @Delete('delete/:id')
   @ApiOperation({ summary: 'Delete a user' })
@@ -62,6 +85,32 @@ export class UserController {
   @ApiResponse({ status: 500, description: 'Failed to delete user' })
   async deleteUser(@Param('id', ParseIntPipe) userId: number): Promise<void> {
     await this.userService.deleteUser(userId);
+  }
+
+  // Get single deleted user by ID
+  @Get('deleted:id')
+  async getDeletedUserById(@Param('id', ParseIntPipe) userId: number) {
+    const user = await this.userService.getDeletedUser(userId);
+    return user;
+  }
+
+  // Restore a soft-deleted user by ID
+  @Post('restore/:id')
+  @ApiOperation({ summary: 'Restore a soft-deleted user by ID' })
+  @ApiBearerAuth()
+  @ApiResponse({
+    status: 200,
+    description: 'User restored successfully',
+    type: Object,
+  })
+  @ApiResponse({ status: 400, description: 'User not found or not deleted' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden: Admin access required' })
+  @ApiResponse({ status: 500, description: 'Failed to restore user' })
+  async restoreUser(
+    @Param('id', ParseIntPipe) userId: number,
+  ): Promise<{ message: string }> {
+    return this.userService.restoreUser(userId);
   }
 
   @Post('forgot-password')

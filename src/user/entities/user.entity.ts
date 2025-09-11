@@ -4,6 +4,8 @@ import {
   PrimaryGeneratedColumn,
   OneToMany,
   CreateDateColumn,
+  DeleteDateColumn,
+  Index,
 } from 'typeorm';
 import { Otp } from '../../otp/entity/otp.entity';
 
@@ -12,7 +14,8 @@ export class User {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column({ unique: true })
+  @Index({ unique: true })
+  @Column()
   email!: string;
 
   @Column()
@@ -26,4 +29,7 @@ export class User {
 
   @Column({ default: 'unverified' })
   accountStatus!: 'unverified' | 'verified';
+
+  @DeleteDateColumn({ nullable: true })
+  deletedAt?: Date; // Optional, set when user is soft-deleted
 }

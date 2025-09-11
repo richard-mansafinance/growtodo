@@ -81,19 +81,80 @@ export class UserService {
   }
 
   //   delete user
+  // async deleteUser(userId: number): Promise<{ message: string }> {
+  //   const user = await this.userRepository.findOne({ where: { id: userId } });
+  //   if (!user) {
+  //     throw new BadRequestException('User not found');
+  //   }
+  //   try {
+  //     await this.userRepository.delete(userId);
+  //     return {
+  //       message: 'User deleted successfully',
+  //     };
+  //   } catch (error: unknown) {
+  //     console.log(error);
+  //     throw new InternalServerErrorException('Failed to delete user');
+  //   }
+  // }
+
+  // Soft delete a user by ID
   async deleteUser(userId: number): Promise<{ message: string }> {
     const user = await this.userRepository.findOne({ where: { id: userId } });
     if (!user) {
       throw new BadRequestException('User not found');
     }
     try {
-      await this.userRepository.delete(userId);
-      return {
-        message: 'User deleted successfully',
-      };
-    } catch (error: unknown) {
-      console.log(error);
+      await this.userRepository.softDelete(userId);
+      return { message: 'User soft-deleted successfully' };
+    } catch {
       throw new InternalServerErrorException('Failed to delete user');
+    }
+  }
+
+  // Retrieve a single active user by ID
+  async getUserById(userId: number): Promise<User> {
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+    return user;
+  }
+
+  // Retrieve a soft-deleted user
+  async getDeletedUser(userId: number): Promise<User | null> {
+    return this.userRepository.findOne({
+      where: { id: userId },
+      withDeleted: true,
+    });
+  }
+
+  // Retrieve a user
+  async getAllUsers(): Promise<User[]> {
+    try {
+      return await this.userRepository.find();
+    } catch {
+      throw new InternalServerErrorException('Failed to retrieve users');
+    }
+  }
+
+  // Restore a soft-deleted user
+  async restoreUser(userId: number): Promise<{ message: string }> {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      withDeleted: true,
+    });
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+    if (!user.deletedAt) {
+      throw new BadRequestException('User is not deleted');
+    }
+    try {
+      await this.userRepository.restore({ id: userId });
+      return { message: 'User restored successfully' };
+    } catch (error: unknown) {
+      console.error('Error during restore:', error);
+      throw new InternalServerErrorException('Failed to restore user');
     }
   }
 }

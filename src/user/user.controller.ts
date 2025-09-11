@@ -8,6 +8,7 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Query,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserDto } from './dto/user.dto';
@@ -65,9 +66,15 @@ export class UserController {
 
   // Get single user by ID
   @Get(':id')
-  async getUserById(@Param('id', ParseIntPipe) userId: number) {
-    const user = await this.userService.getUserById(userId);
-    return user;
+  async getUserById(
+    @Param('id', ParseIntPipe) userId: number,
+    @Query('includeTodos') includeTodos: string | boolean = true,
+  ) {
+    const include =
+      includeTodos === 'true' ||
+      includeTodos === true ||
+      includeTodos === undefined;
+    return this.userService.getUserById(userId, include);
   }
 
   //   Delete a user by ID

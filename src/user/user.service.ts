@@ -5,13 +5,14 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 import { UserDto } from './dto/user.dto';
 import * as bcrypt from 'bcryptjs';
 import { OtpService } from '../otp/otp.service';
 import { OTPType } from '../otp/types/otpType';
 import { EmailService } from '../email/email.service';
 import { ConfigService } from '@nestjs/config';
+import { UserResponseDto } from './dto/userResponse.dto';
 
 @Injectable()
 export class UserService {
@@ -112,12 +113,30 @@ export class UserService {
   }
 
   // Retrieve a single active user by ID, including todos
-  async getUserById(userId: number): Promise<User> {
-    const user = await this.userRepository.findOne({ where: { id: userId } });
-    if (!user) {
-      throw new BadRequestException('User not found');
+  async getUserById(
+    userId: number,
+    includeTodos: boolean = false,
+  ): Promise<UserResponseDto> {
+    try {
+      const user = await this.userRepository.findOne({
+        where: { id: userId },
+        relations: includeTodos ? ['todos'] : [], // Conditionally include todos
+      });
+      if (!user) {
+        throw new BadRequestException('User not found');
+      }
+      return {
+        id: user.id,
+        email: user.email,
+        createdAt: user.createdAt,
+        todos: includeTodos ? user.todos : undefined,
+      };
+    } catch (error: unknown) {
+      console.error('Error fetching user:', error);
+      throw error instanceof BadRequestException
+        ? error
+        : new InternalServerErrorException('Failed to retrieve user');
     }
-    return user;
   }
 
   // Retrieve a soft-deleted user
@@ -129,9 +148,18 @@ export class UserService {
   }
 
   // Retrieve a user
-  async getAllUsers(): Promise<User[]> {
+  async getAllUsers(): Promise<UserResponseDto[]> {
     try {
-      return await this.userRepository.find();
+      const users = await this.userRepository.find({
+        where: { deletedAt: IsNull() },
+        relations: ['todos'],
+      });
+      return users.map((user) => ({
+        id: user.id,
+        email: user.email,
+        createdAt: user.createdAt,
+        todos: user.todos,
+      }));
     } catch {
       throw new InternalServerErrorException('Failed to retrieve users');
     }
@@ -142,6 +170,7 @@ export class UserService {
     const user = await this.userRepository.findOne({
       where: { id: userId },
       withDeleted: true,
+      relations: ['todos'],
     });
     if (!user) {
       throw new BadRequestException('User not found');

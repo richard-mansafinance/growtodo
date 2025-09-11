@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import { Otp } from '../../otp/entity/otp.entity';
 import { Todo } from '../../todo/entities/todo.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 export class User {
@@ -19,6 +20,7 @@ export class User {
   @Column()
   email!: string;
 
+  @Exclude()
   @Column()
   password!: string;
 
@@ -31,9 +33,10 @@ export class User {
   @Column({ default: 'unverified' })
   accountStatus!: 'unverified' | 'verified';
 
+  @Exclude()
   @DeleteDateColumn({ nullable: true })
-  deletedAt?: Date; // Optional, set when user is soft-deleted
+  deletedAt!: Date; // Optional, set when user is soft-deleted
 
   @OneToMany(() => Todo, (todo) => todo.user, { nullable: true })
-  todos!: Todo[] | null; // Explicitly allow null for safety
+  todos?: Todo[] | null; // Explicitly allow null for safety
 }

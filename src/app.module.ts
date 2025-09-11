@@ -8,6 +8,7 @@ import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { EmailModule } from './email/email.module';
 import { OtpModule } from './otp/otp.module';
+import { TodoModule } from './todo/todo.module';
 
 @Module({
   imports: [
@@ -21,8 +22,9 @@ import { OtpModule } from './otp/otp.module';
     }),
     UserModule,
     AuthModule,
-    EmailModule, // Ensure AuthModule is imported here
+    EmailModule,
     OtpModule,
+    TodoModule,
   ],
   controllers: [AppController],
   providers: [AppService],

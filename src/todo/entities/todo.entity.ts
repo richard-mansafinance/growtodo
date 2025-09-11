@@ -1,4 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  CreateDateColumn,
+} from 'typeorm';
 import { User } from '../../user/entities/user.entity';
 
 @Entity()
@@ -15,6 +21,9 @@ export class Todo {
   @Column({ default: false })
   completed!: boolean;
 
-  @ManyToOne(() => User, (user) => user.todos, { onDelete: 'CASCADE' }) // Delete todos if user is deleted
+  @CreateDateColumn()
+  createdAt!: Date;
+
+  @ManyToOne(() => User, (user) => user.todos) // Delete todos if user is deleted
   user!: User;
 }

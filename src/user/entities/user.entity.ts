@@ -8,6 +8,7 @@ import {
   Index,
 } from 'typeorm';
 import { Otp } from '../../otp/entity/otp.entity';
+import { Todo } from '../../todo/entities/todo.entity';
 
 @Entity()
 export class User {
@@ -32,4 +33,7 @@ export class User {
 
   @DeleteDateColumn({ nullable: true })
   deletedAt?: Date; // Optional, set when user is soft-deleted
+
+  @OneToMany(() => Todo, (todo) => todo.user, { nullable: true })
+  todos!: Todo[] | null; // Explicitly allow null for safety
 }

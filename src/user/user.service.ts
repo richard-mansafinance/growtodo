@@ -111,7 +111,7 @@ export class UserService {
     }
   }
 
-  // Retrieve a single active user by ID
+  // Retrieve a single active user by ID, including todos
   async getUserById(userId: number): Promise<User> {
     const user = await this.userRepository.findOne({ where: { id: userId } });
     if (!user) {

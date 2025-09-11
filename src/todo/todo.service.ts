@@ -39,7 +39,6 @@ export class TodoService {
       });
       return await this.todoRepository.save(todo);
     } catch (error: unknown) {
-      console.log('Error creating todo:', error);
       throw error instanceof BadRequestException
         ? error
         : new InternalServerErrorException('Failed to create todo');

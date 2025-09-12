@@ -69,6 +69,7 @@ export class AuthService {
     }
   }
 
+  // Verify token
   async verifyToken(userId: number, token: string) {
     await this.otpService.validateOTP(userId, token);
 
@@ -84,6 +85,7 @@ export class AuthService {
     return await this.userRepository.save(user);
   }
 
+  // Logout
   async logout(token: string) {
     const decoded = this.jwtService.decode(token);
     if (!decoded?.exp) {

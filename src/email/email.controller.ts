@@ -6,7 +6,7 @@ import {
   ApiBadRequestResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { sendEmailDto } from './dto/email.dto';
+import { SendEmailDto } from './dto/email.dto';
 
 @ApiTags('Email')
 @Controller('email')
@@ -22,7 +22,7 @@ export class EmailController {
   @ApiBadRequestResponse({
     description: 'Failed to send email. Invalid payload or SMTP error',
   })
-  async sendEmail(@Body() dto: sendEmailDto): Promise<{ message: string }> {
+  async sendEmail(@Body() dto: SendEmailDto): Promise<{ message: string }> {
     await this.emailService.sendEmail(dto);
     return { message: 'Email sent successfully' };
   }

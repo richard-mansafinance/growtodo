@@ -47,7 +47,7 @@ export class TodoController {
     );
     return plainToInstance(Todo, todo, {
       excludeExtraneousValues: true,
-    }) as Todo;
+    });
   }
 
   @UseGuards(JwtAuthGuard)

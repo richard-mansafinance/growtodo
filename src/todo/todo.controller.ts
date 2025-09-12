@@ -45,9 +45,14 @@ export class TodoController {
       createTodoDto.userId,
       createTodoDto,
     );
-    return plainToInstance(Todo, todo, {
+    const result = plainToInstance(Todo, todo, {
       excludeExtraneousValues: true,
     });
+
+    if (!(result instanceof Todo)) {
+      throw new Error('Failed to create a valid Todo instance');
+    }
+    return result;
   }
 
   @UseGuards(JwtAuthGuard)

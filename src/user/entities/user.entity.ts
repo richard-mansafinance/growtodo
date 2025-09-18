@@ -24,7 +24,6 @@ export class User {
 
   @Exclude()
   @Column()
-  @Expose()
   password!: string;
 
   @OneToMany(() => Otp, (otp) => otp.user, { cascade: true })

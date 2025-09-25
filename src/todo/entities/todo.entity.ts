@@ -4,9 +4,10 @@ import {
   Column,
   ManyToOne,
   CreateDateColumn,
+  DeleteDateColumn,
 } from 'typeorm';
 import { User } from '../../user/entities/user.entity';
-import { Expose, Type } from 'class-transformer';
+import { Exclude, Expose, Type } from 'class-transformer';
 
 @Entity()
 export class Todo {
@@ -29,6 +30,10 @@ export class Todo {
   @CreateDateColumn()
   @Expose()
   createdAt!: Date;
+
+  @Exclude()
+  @DeleteDateColumn({ nullable: true })
+  deletedAt!: Date;
 
   @ManyToOne(() => User, (user) => user.todos) // Delete todos if user is deleted
   @Expose()

@@ -5,7 +5,7 @@ import {
   Param,
   Body,
   UseGuards,
-  ParseIntPipe,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -83,7 +83,7 @@ export class AdminController {
   @ApiResponse({ status: 403, description: 'Forbidden: Admin access required' })
   @ApiResponse({ status: 500, description: 'Failed to set user roles' })
   async setUserRoles(
-    @Param('userId', ParseIntPipe) userId: number,
+    @Param('userId', new ParseUUIDPipe({ version: '4' })) userId: string,
     @Body() setUserRolesDto: SetUserRolesDto,
   ): Promise<{ message: string }> {
     return await this.adminService.setUserRoles(userId, setUserRolesDto.roles);

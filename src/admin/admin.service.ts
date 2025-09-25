@@ -75,7 +75,7 @@ export class AdminService {
   }
 
   async setUserRoles(
-    userId: number,
+    userId: string,
     roles: 'admin' | 'user',
   ): Promise<{ message: string }> {
     try {

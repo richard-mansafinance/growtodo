@@ -3,7 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 
 class UserResponse {
   @ApiProperty({ example: 1 })
-  id!: number;
+  id!: string;
 
   @ApiProperty({ example: 'awesomeotinomz@gmail.com' })
   email!: string;

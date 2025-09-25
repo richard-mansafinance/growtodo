@@ -22,7 +22,7 @@ export class TodoService {
 
   // Create a new todos
   async createTodo(
-    userId: number,
+    userId: string,
     createTodoDto: CreateTodoDto,
   ): Promise<Todo> {
     try {
@@ -46,7 +46,7 @@ export class TodoService {
   }
 
   //   Get all todos for a user
-  async getTodosByUserId(userId: number): Promise<Todo[]> {
+  async getTodosByUserId(userId: string): Promise<Todo[]> {
     try {
       const user = await this.userRepository.findOne({
         where: { id: userId, deletedAt: IsNull() },

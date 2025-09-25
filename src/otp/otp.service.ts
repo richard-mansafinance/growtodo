@@ -75,7 +75,7 @@ export class OtpService {
     throw new BadRequestException('Invalid OTP type provided.');
   }
 
-  async validateOTP(userId: number, token: string): Promise<boolean> {
+  async validateOTP(userId: string, token: string): Promise<boolean> {
     const validToken = await this.otpRepository.findOne({
       where: {
         user: { id: userId },

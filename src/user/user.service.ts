@@ -82,7 +82,7 @@ export class UserService {
   }
 
   //   delete user
-  // async deleteUser(userId: number): Promise<{ message: string }> {
+  // async deleteUser(userId: string): Promise<{ message: string }> {
   //   const user = await this.userRepository.findOne({ where: { id: userId } });
   //   if (!user) {
   //     throw new BadRequestException('User not found');
@@ -99,7 +99,7 @@ export class UserService {
   // }
 
   // Soft delete a user by ID
-  async deleteUser(userId: number): Promise<{ message: string }> {
+  async deleteUser(userId: string): Promise<{ message: string }> {
     const user = await this.userRepository.findOne({ where: { id: userId } });
     if (!user) {
       throw new BadRequestException('User not found');
@@ -114,7 +114,7 @@ export class UserService {
 
   // Retrieve a single active user by ID, including todos
   async getUserById(
-    userId: number,
+    userId: string,
     includeTodos: boolean = false,
   ): Promise<UserResponseDto> {
     try {
@@ -140,7 +140,7 @@ export class UserService {
   }
 
   // Retrieve a soft-deleted user
-  async getDeletedUser(userId: number): Promise<User | null> {
+  async getDeletedUser(userId: string): Promise<User | null> {
     return this.userRepository.findOne({
       where: { id: userId },
       withDeleted: true,
@@ -166,7 +166,7 @@ export class UserService {
   }
 
   // Restore a soft-deleted user
-  async restoreUser(userId: number): Promise<{ message: string }> {
+  async restoreUser(userId: string): Promise<{ message: string }> {
     const user = await this.userRepository.findOne({
       where: { id: userId },
       withDeleted: true,

@@ -10,12 +10,11 @@ import {
 import { Otp } from '../../otp/entity/otp.entity';
 import { Todo } from '../../todo/entities/todo.entity';
 import { Exclude, Expose } from 'class-transformer';
-
 @Entity()
 export class User {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   @Expose()
-  id!: number;
+  id!: string;
 
   @Index({ unique: true })
   @Column()
@@ -26,7 +25,7 @@ export class User {
   @Column()
   password!: string;
 
-  @OneToMany(() => Otp, (otp) => otp.user, { cascade: true })
+  @OneToMany(() => Otp, (otp) => otp.user)
   otps!: Otp[];
 
   @CreateDateColumn()
@@ -39,14 +38,13 @@ export class User {
 
   @Exclude()
   @DeleteDateColumn({ nullable: true })
-  deletedAt!: Date; // Optional, set when user is soft-deleted
+  deletedAt!: Date;
 
+  @OneToMany(() => Todo, (todo) => todo.user)
   @Expose()
-  @OneToMany(() => Todo, (todo) => todo.user, { nullable: true })
-  todos?: Todo[] | null; // Explicitly allow null for safety
+  todos?: Todo[];
 
   @Exclude()
-  @Index('idx_user_roles')
   @Column({ default: 'user' })
   roles!: 'admin' | 'user';
 }

@@ -22,6 +22,8 @@ import { Todo } from './entities/todo.entity';
 import { UpdateTodoDto } from './dto/update-todo.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { plainToInstance } from 'class-transformer';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../auth/guards/roles.decorator';
 
 @ApiTags('Todos') // Groups all endpoints under "Todos" in docs
 @ApiBearerAuth() // Adds JWT bearer auth requirement in docs
@@ -65,8 +67,9 @@ export class TodoController {
     return this.todoService.getTodosByUserId(userId);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Patch(':id')
+  @Roles('user')
   @ApiOperation({ summary: 'Update a todo by ID' })
   @ApiBody({ type: UpdateTodoDto })
   @ApiResponse({
@@ -81,8 +84,9 @@ export class TodoController {
     return this.todoService.updateTodo(todoId, updateTodoDto);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Delete(':id')
+  @Roles('user')
   @ApiOperation({ summary: 'Delete a todo by ID' })
   @ApiResponse({ status: 200, description: 'Todo successfully deleted' })
   async deleteTodo(

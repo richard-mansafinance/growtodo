@@ -6,7 +6,7 @@ import {
   Get,
   NotFoundException,
   Param,
-  ParseIntPipe,
+  ParseUUIDPipe,
   Post,
   Query,
 } from '@nestjs/common';
@@ -85,7 +85,7 @@ export class UserController {
     type: UserResponseDto,
   })
   async getUserById(
-    @Param('id', ParseIntPipe) userId: number,
+    @Param('id', new ParseUUIDPipe({ version: '4' })) userId: string,
     @Query('includeTodos') includeTodos: string | boolean = true,
   ): Promise<UserResponseDto> {
     const include =
@@ -107,7 +107,7 @@ export class UserController {
   @ApiBadRequestResponse({ description: 'User not found' })
   @ApiResponse({ status: 500, description: 'Failed to delete user' })
   async deleteUser(
-    @Param('id', ParseIntPipe) userId: number,
+    @Param('id', new ParseUUIDPipe({ version: '4' })) userId: string,
   ): Promise<{ message: string }> {
     await this.userService.deleteUser(userId);
     return { message: 'User deleted successfully' };
@@ -118,7 +118,7 @@ export class UserController {
   @ApiOperation({ summary: 'Get a deleted user by ID' })
   @ApiOkResponse({ type: UserResponseDto })
   async getDeletedUserById(
-    @Param('id', ParseIntPipe) userId: number,
+    @Param('id', new ParseUUIDPipe({ version: '4' })) userId: string,
   ): Promise<UserResponseDto> {
     const user = await this.userService.getDeletedUser(userId);
     if (!user) {
@@ -139,7 +139,7 @@ export class UserController {
   @ApiResponse({ status: 403, description: 'Forbidden: Admin access required' })
   @ApiResponse({ status: 500, description: 'Failed to restore user' })
   async restoreUser(
-    @Param('id', ParseIntPipe) userId: number,
+    @Param('id', new ParseUUIDPipe({ version: '4' })) userId: string,
   ): Promise<{ message: string }> {
     return this.userService.restoreUser(userId);
   }

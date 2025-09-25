@@ -70,11 +70,11 @@ export class AuthService {
   }
 
   // Verify token
-  async verifyToken(userId: number, token: string) {
+  async verifyToken(userId: string, token: string) {
     await this.otpService.validateOTP(userId, token);
 
     const user = await this.userRepository.findOne({
-      where: { id: Number(userId) },
+      where: { id: userId },
     });
 
     if (!user) {
@@ -100,7 +100,7 @@ export class AuthService {
   async resetPassword(token: string, newPassword: string): Promise<string> {
     const userId = await this.otpService.validateResetPassword(token);
     const user = await this.userRepository.findOne({
-      where: { id: Number(userId) },
+      where: { id: String(userId) },
     });
 
     if (!user) {

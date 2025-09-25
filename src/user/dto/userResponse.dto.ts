@@ -3,7 +3,7 @@ import { TodoResponseDto } from '../../todo/dto/todo-response.dto';
 
 export class UserResponseDto {
   @ApiProperty({ example: 1 })
-  id!: number;
+  id!: string;
 
   @ApiProperty({ example: 'richard@mansafinance.co' })
   email!: string;

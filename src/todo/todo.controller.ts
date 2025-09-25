@@ -4,7 +4,7 @@ import {
   Delete,
   Get,
   Param,
-  ParseIntPipe,
+  ParseUUIDPipe,
   Patch,
   Post,
   UseGuards,
@@ -39,7 +39,7 @@ export class TodoController {
     type: Todo,
   })
   async createTodo(
-    @Body() createTodoDto: CreateTodoDto & { userId: number },
+    @Body() createTodoDto: CreateTodoDto & { userId: string },
   ): Promise<Todo> {
     const todo = await this.todoService.createTodo(
       createTodoDto.userId,
@@ -60,7 +60,7 @@ export class TodoController {
   @ApiOperation({ summary: 'Get all todos for a specific user' })
   @ApiResponse({ status: 200, description: 'List of user todos', type: [Todo] })
   async getTodosByUserId(
-    @Param('userId', ParseIntPipe) userId: number,
+    @Param('userId', new ParseUUIDPipe({ version: '4' })) userId: string,
   ): Promise<Todo[]> {
     return this.todoService.getTodosByUserId(userId);
   }
@@ -75,7 +75,7 @@ export class TodoController {
     type: Todo,
   })
   async updateTodo(
-    @Param('id', ParseIntPipe) todoId: number,
+    @Param('id', new ParseUUIDPipe({ version: '4' })) todoId: number,
     @Body() updateTodoDto: UpdateTodoDto,
   ): Promise<Todo> {
     return this.todoService.updateTodo(todoId, updateTodoDto);
@@ -86,7 +86,7 @@ export class TodoController {
   @ApiOperation({ summary: 'Delete a todo by ID' })
   @ApiResponse({ status: 200, description: 'Todo successfully deleted' })
   async deleteTodo(
-    @Param('id', ParseIntPipe) todoId: number,
+    @Param('id', new ParseUUIDPipe({ version: '4' })) todoId: number,
   ): Promise<{ message: string }> {
     return this.todoService.deleteTodo(todoId);
   }

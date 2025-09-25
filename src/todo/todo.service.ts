@@ -79,6 +79,7 @@ export class TodoService {
       if (!todo) {
         throw new BadRequestException('Todo not found');
       }
+
       Object.assign(todo, updateTodoDto);
       return await this.todoRepository.save(todo);
     } catch (error: unknown) {
@@ -100,6 +101,7 @@ export class TodoService {
       if (!todo) {
         throw new BadRequestException('Todo not found');
       }
+
       await this.todoRepository.softDelete(todoId);
       return { message: 'Task deleted successfully' };
     } catch (error: unknown) {

@@ -11,6 +11,7 @@ import { TokenBlacklistService } from '../token-blacklist.service';
 interface JwtPayload {
   sub: number;
   email: string;
+  roles: 'admin' | 'user';
 }
 
 @Injectable()
@@ -50,6 +51,7 @@ export class JwtAuthGuard implements CanActivate {
       request.user = {
         id: decoded.sub, // Use 'sub' to match JWT payload
         email: decoded.email,
+        roles: decoded.roles,
       };
 
       return true;

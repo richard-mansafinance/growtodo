@@ -9,6 +9,7 @@ import {
   ParseUUIDPipe,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserDto } from './dto/user.dto';
@@ -24,6 +25,8 @@ import {
 import { RequestTokenDto } from './dto/requestToken.dto';
 import { OTPType } from '../otp/types/otpType';
 import { UserResponseDto } from './dto/userResponse.dto';
+import { AdminGuard } from '../auth/guards/admin.guard';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @ApiTags('User')
 @ApiBearerAuth()
@@ -31,7 +34,7 @@ import { UserResponseDto } from './dto/userResponse.dto';
 export class UserController {
   constructor(private userService: UserService) {}
 
-  // Register a new user
+  // Register a new user (Public)
   @Post('register')
   @ApiOperation({ summary: 'Register a new user' })
   @ApiCreatedResponse({
@@ -48,7 +51,7 @@ export class UserController {
     return { message: 'User created successfully and OTP sent to email.' };
   }
 
-  // Request OTP for email
+  // Request OTP (Public)
   @Post('request-otp')
   @ApiOperation({ summary: 'Request OTP for email verification' })
   @ApiOkResponse({
@@ -66,8 +69,9 @@ export class UserController {
     return { message: 'OTP sent successfully. Please check email' };
   }
 
-  // Get all users
+  // Get all users (Admin only)
   @Get('all')
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @ApiOperation({ summary: 'Get all active users' })
   @ApiOkResponse({
     description: 'List of all active users',
@@ -77,8 +81,9 @@ export class UserController {
     return this.userService.getAllUsers();
   }
 
-  // Get single user by ID
+  // Get single user (Self or Admin)
   @Get(':id')
+  @UseGuards(JwtAuthGuard) // Self-check happens in service
   @ApiOperation({ summary: 'Get a single user by ID' })
   @ApiOkResponse({
     description: 'User found',
@@ -95,7 +100,8 @@ export class UserController {
     return this.userService.getUserById(userId, include);
   }
 
-  // Delete a user by ID
+  // Delete a user (Admin only)
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @Delete('delete/:id')
   @ApiOperation({ summary: 'Delete a user by ID' })
   @ApiOkResponse({
@@ -113,8 +119,9 @@ export class UserController {
     return { message: 'User deleted successfully' };
   }
 
-  // Get single deleted user by ID
+  // Get deleted user (Admin only)
   @Get('deleted/:id')
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @ApiOperation({ summary: 'Get a deleted user by ID' })
   @ApiOkResponse({ type: UserResponseDto })
   async getDeletedUserById(
@@ -127,8 +134,9 @@ export class UserController {
     return user;
   }
 
-  // Restore a soft-deleted user by ID
+  // Restore a soft-deleted user (Admin only)
   @Post('restore/:id')
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @ApiOperation({ summary: 'Restore a soft-deleted user by ID' })
   @ApiOkResponse({
     description: 'User restored successfully',
@@ -144,7 +152,7 @@ export class UserController {
     return this.userService.restoreUser(userId);
   }
 
-  // Forgot password
+  // Forgot password (Public)
   @Post('forgot-password')
   @ApiOperation({ summary: 'Request password reset link' })
   @ApiOkResponse({
@@ -165,22 +173,5 @@ export class UserController {
     return {
       message: 'Password reset link has been sent. Please check your email.',
     };
-  }
-
-  // Create admin
-  @Post('admin')
-  @ApiOperation({ summary: 'Register a new user' })
-  @ApiCreatedResponse({
-    description: 'User created successfully',
-    schema: {
-      example: {
-        message: 'User created successfully and OTP sent to email.',
-      },
-    },
-  })
-  @ApiBadRequestResponse({ description: 'Invalid credentials' })
-  async createAdmin(@Body() userDto: UserDto) {
-    await this.userService.register(userDto);
-    return { message: 'User created successfully and OTP sent to email.' };
   }
 }

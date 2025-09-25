@@ -100,7 +100,7 @@ export class TodoService {
       if (!todo) {
         throw new BadRequestException('Todo not found');
       }
-      await this.todoRepository.delete(todoId);
+      await this.todoRepository.softDelete(todoId);
       return { message: 'Task deleted successfully' };
     } catch (error: unknown) {
       console.error('Error updating todo:', error);

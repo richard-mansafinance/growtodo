@@ -166,4 +166,21 @@ export class UserController {
       message: 'Password reset link has been sent. Please check your email.',
     };
   }
+
+  // Create admin
+  @Post('admin')
+  @ApiOperation({ summary: 'Register a new user' })
+  @ApiCreatedResponse({
+    description: 'User created successfully',
+    schema: {
+      example: {
+        message: 'User created successfully and OTP sent to email.',
+      },
+    },
+  })
+  @ApiBadRequestResponse({ description: 'Invalid credentials' })
+  async createAdmin(@Body() userDto: UserDto) {
+    await this.userService.register(userDto);
+    return { message: 'User created successfully and OTP sent to email.' };
+  }
 }

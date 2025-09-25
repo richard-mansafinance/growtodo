@@ -44,4 +44,9 @@ export class User {
   @Expose()
   @OneToMany(() => Todo, (todo) => todo.user, { nullable: true })
   todos?: Todo[] | null; // Explicitly allow null for safety
+
+  @Exclude()
+  @Index('idx_user_roles')
+  @Column({ default: 'user' })
+  roles!: 'admin' | 'user';
 }

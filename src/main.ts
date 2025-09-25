@@ -1,9 +1,18 @@
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true, // Remove properties not in DTO
+      forbidNonWhitelisted: true, // Throw error if unknown props are sent
+      transform: true, // Auto-transform payloads to DTO instances
+    }),
+  );
 
   const config = new DocumentBuilder()
     .setTitle('Growtodo API')

@@ -13,6 +13,7 @@ import { User } from './user/entities/user.entity';
 import { BlacklistedToken } from './auth/entities/blacklisted-token.entity';
 import { Otp } from './otp/entity/otp.entity';
 import { Todo } from './todo/entities/todo.entity';
+import { AdminModule } from './admin/admin.module';
 
 export const typeOrmConfig = (
   configService: ConfigService,
@@ -39,6 +40,7 @@ export const typeOrmConfig = (
     }),
     UserModule,
     AuthModule,
+    AdminModule,
     EmailModule,
     OtpModule,
     TodoModule,

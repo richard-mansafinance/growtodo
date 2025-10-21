@@ -26,6 +26,9 @@ export const typeOrmConfig = (
   database: configService.get<string>('DB_DATABASE'),
   entities: [User, BlacklistedToken, Otp, Todo],
   synchronize: true,
+  ssl: {
+    rejectUnauthorized: false,
+  },
 });
 
 @Module({

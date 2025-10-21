@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "rootDir": ".", // Allow jest.config.ts in the root
+    "outDir": "./dist-test",
+    "noEmit": true // Prevent emitting compiled files for tests
+  },
+  "include": ["src/**/*", "jest.config.ts"],
+  "exclude": ["node_modules", "dist"]
+}
